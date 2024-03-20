@@ -14,17 +14,13 @@ export async function generate(formData: FormData) {
 
   const res = await hf.translation({
     model: "t5-base",
-    inputs: rawData.prompt,
-    parameters: {
-      src_lang: "en_XX",
-      tgt_lang: "fr_XX",
-    },
+    inputs: (rawData.prompt as string) || "",
   });
 
-  console.log(res.translation_text);
-
   await connectDB();
-  const newEntry = await Prompt.create({ prompt: res.translation_text });
+  const newEntry = await Prompt.create({
+    prompt: (res as any)["translation_text"],
+  });
 
   console.log(newEntry);
   revalidatePath("/");
